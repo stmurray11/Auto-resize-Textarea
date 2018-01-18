@@ -37,8 +37,10 @@ $(".autoSizeCharLimit").bind('focus', function () { glb_textareaAutoSize(); });
 
 function glb_textareaAutoSize(ele, bDontPopTheLabel) {
 
-    if (ele == null && event.target.id != 'undefined') {
-        ele = document.getElementById(event.target.id);
+    //thisworksin old ie and chrome
+    var target = ele ? ele.target : window.event.srcElement;
+    if (ele == null && target.id != 'undefined') {
+        ele = document.getElementById(target.id);
     }
 
     //capture scroll position to reset at end of method TO ELIMINATE NUSIANCE PAGE JUMPING TO NEW SCROLL POSITION
