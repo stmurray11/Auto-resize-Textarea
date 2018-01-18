@@ -1,0 +1,87 @@
+<html>
+
+<head>
+<script type="text/javascript" src="jquery-3.1.1.js"></script>
+</head>
+
+<style>
+textarea.autoSizeCharLimit
+{
+    width: 350px;
+    overflow: hidden;
+    background-color: #fffafa; 
+}
+</style>
+
+<body>
+<h1> Here is the textarea:</h1>
+<p>Limit is set to 200 characters. Paste or type some text and you'll see it grow vertically; 
+   when you reach the max, hold down the backspace and you'll see it shrink vertically.
+</p>
+<textarea id='theTa' class='autoSizeCharLimit' >sometext is already here </textarea>
+<div id="floatingMessageBox" style="display:none;"></div>
+
+</body>
+</html>
+
+<script>
+
+//bind the func to textarea's of class='autoSizeCharLimit'
+$(".autoSizeCharLimit").bind('keyup', function () { glb_textareaAutoSize(); });
+$(".autoSizeCharLimit").bind('paste', function () { glb_textareaAutoSize(); });
+$(".autoSizeCharLimit").bind('focus', function () { glb_textareaAutoSize(); });
+//set the max length    
+ $(".autoSizeCharLimit").attr('maxlength', 200);
+
+
+
+function glb_textareaAutoSize(ele, bDontPopTheLabel) {
+
+    if (ele == null && event.target.id != 'undefined') {
+        ele = document.getElementById(event.target.id);
+    }
+
+    //capture scroll position to reset at end of method TO ELIMINATE NUSIANCE PAGE JUMPING TO NEW SCROLL POSITION
+    var scrollLeft = window.pageXOffset || (document.documentElement || document.body.parentNode || document.body).scrollLeft;
+    var scrollTop = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
+
+    ele.style.height = 'auto';
+    if (ele.value.length == 0) { ele.style.height = '15px'; return; }
+    var newHeight = ele.scrollHeight + 10;
+    ele.style.height = newHeight.toString() + 'px';
+
+    if (ele.value.length > ele.maxLength) { ele.value.length = 10; }
+
+    var iWarningLength = ele.maxLength / 10;
+
+    if (bDontPopTheLabel == null && ele.maxLength - ele.value.length <= iWarningLength) {
+
+        $('#floatingMessageBox').css({
+            'position': 'absolute',
+            'width': ele.width,
+            'left': ele.offsetLeft ,
+            'top': ele.offsetTop + ele.height + 10,
+            'display': 'block',
+            'background-color': 'rgba(200,200,0,0.25)',
+            'fontSize': '14px',
+            'color': 'rgba(0,0,0,0.95)',
+            'border-radius': '10px 10px 10px 10px'
+        }); 
+
+        document.getElementById('floatingMessageBox').innerHTML = '&nbsp;&nbsp;You\'ve entered '
+                                                                + ele.value.length.toString() + ' characters; limit is '
+                                                                + ele.maxLength + ' characters.&nbsp;&nbsp;';
+
+        $(ele).focusout(function () { $('#floatingMessageBox').css({ 'display': 'none' }); });
+        $(ele).blur(function () { $('#floatingMessageBox').css({ 'display': 'none' }); });
+    }//if
+    else {
+        document.getElementById('floatingMessageBox').style.display = 'none';
+    }
+
+    //finally
+    window.scrollTo(scrollLeft, scrollTop);
+}
+
+
+</script>
